@@ -508,7 +508,7 @@
                 var objectif = parseFloat(document.getElementById("objectif").value);
                 var difference = performance - objectif;
                 var percentageDifference = (difference / objectif) * 100;
-                var total = parseFloat(row.cells[3].innerText);
+                var total = parseFloat(row.cells[2].innerText);
 
                 reportContent += `EQUIPE: ${groupName}\n`;
                 reportContent += `EQUIPE: ${total}\n M²`;
