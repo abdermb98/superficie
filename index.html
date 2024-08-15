@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcul de la Performance de l'Équipe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            margin: 10px;
+            position: relative; /* For positioning buttons */
+            
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-section,
+        .objectif-container,
+        .group-name-container {
+            margin-bottom: 10px;
+        }
+
+        .form-section label,
+        .objectif-container label,
+        .group-name-container label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-section input[type="number"],
+        .form-section input[type="time"],
+        .objectif-container input,
+        .group-name-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .result-container h2 {
+            color: #333;
+        }
+
+        .result-container #performanceResult {
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .result-container .below-objective {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .result-container .above-objective {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .result-container .difference {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 600px) {
+            .data-table th, .data-table td {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+
+            .result-container #performanceResult {
+                font-size: 18px;
+            }
+        }
+
+        /* Style pour les boutons en haut à droite et à gauche */
+        .top-buttons {
+            position: sticky;
+            top: 10px;
+            width: calc(100% - 40px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-buttons button {
+            width: auto;
+            padding: 10px 20px;
+        }
+
+        /* Style pour le conteneur du graphique */
+        .chart-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #reportModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #reportModalContent {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        #reportText {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .close-report {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            right: 5%;
+            bottom: 10px;
+            width: 40%;
+        }
+
+        .close-report:hover {
+            background-color: #0056b3;
+        }
+
+        .copy-report {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            left: 5%;
+            bottom: 10px;
+            width: 40%;
+            
+        }
+
+        .copy-report:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-buttons">
+            <button onclick="clearData()">Effacer</button>
+            <button onclick="showReport()">Rapport</button>
+            <button onclick="navigateToPage()">Distro</button>
+        </div>
+        <h1>Rendement d'Équipes</h1>
+
+        <div class="group-name-container">
+            <label for="groupName">Equipe :</label>
+            <input type="text" id="groupName" name="groupName" required>
+        </div>
+
+        <div class="objectif-container">
+            <label for="objectif">Objectif :</label>
+            <input type="number" id="objectif" name="objectif" required>
+        </div>
+
+        <form id="performanceForm">
+            <div class="form-section">
+                <label for="numPeople">Nombre de personnes :</label>
+                <input type="number" id="numPeople" name="numPeople" required>
+
+                <label for="entryTime">H Entree :</label>
+                <input type="time" id="entryTime" name="entryTime" required>
+
+                <label for="exitTime">H Sortie :</label>
+                <input type="time" id="exitTime" name="exitTime" required>
+
+                <label for="quantityCollected">QTE KG :</label>
+                <input type="number" id="quantityCollected" name="quantityCollected" required>
+            </div>
+
+            <button type="button" onclick="calculatePerformance()">Calculer le Rendement</button>
+
+            <!-- Résultat affiché sous le bouton -->
+            <div class="result-container">
+                <h2 id="performanceTitle">Rendement moyenne de l'équipe par heure :</h2>
+                <div id="performanceResult">--</div>
+                <div id="performanceDifference" class="difference">--</div>
+            </div>
+        </form>
+
+        <!-- Tableau affichant les données -->
+        <h2>Liste des Rendement d'equipes</h2>
+        <table class="data-table" id="dataTable">
+            <thead>
+                <tr>
+                    <th>EQUIPE</th>
+                    <th>NOMBRE DE PRS</th>
+                    <th>TOTAL KG</th>
+                    <th>RENDEMENT (par heure)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Les lignes seront ajoutées dynamiquement ici -->
+            </tbody>
+        </table>
+
+        <!-- Conteneur pour le graphique -->
+        <div class="chart-container" id="chartContainer">
+            <canvas id="performanceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher le rapport -->
+    <div id="reportModal">
+        <div id="reportModalContent">
+            <textarea id="reportText" readonly></textarea>
+            <button class="copy-report" onclick="copyReport()">Copier le rapport</button>
+            <button class="close-report" onclick="closeReport()">Fermer</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function navigateToPage() {
+      window.location.href = 'https://abdermb98.github.io/DISTREO/'; // استبدل هذا بالرابط الخاص بك
+    }
+        // Définir l'heure actuelle comme valeur par défaut pour le champ Heure de sortie
+        window.onload = function() {
+            var now = new Date();
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById("exitTime").value = hours + ':' + minutes;
+
+            // Charger les données sauvegardées à partir du LocalStorage
+            loadSavedData();
+        };
+
+        function calculatePerformance() {
+            var groupName = document.getElementById("groupName").value;
+            var numPeople = parseFloat(document.getElementById("numPeople").value);
+            var entryTime = document.getElementById("entryTime").value;
+            var exitTime = document.getElementById("exitTime").value;
+            var quantityCollected = parseFloat(document.getElementById("quantityCollected").value);
+            var objectif = parseFloat(document.getElementById("objectif").value);
+
+            var startTime = new Date("01/01/2000 " + entryTime);
+            var endTime = new Date("01/01/2000 " + exitTime);
+
+            var timeDiff = (endTime - startTime) / (1000 * 60 * 60); // Convertir la différence en heures
+
+            if (timeDiff <= 0) {
+                alert("Veuillez vérifier les heures d'entrée et de sortie. L'heure de sortie doit être après l'heure d'entrée.");
+                return;
+            }
+
+            var performancePerHour = quantityCollected / (numPeople * timeDiff);
+            var performanceResultElement = document.getElementById("performanceResult");
+            var performanceDifferenceElement = document.getElementById("performanceDifference");
+            var performanceTitleElement = document.getElementById("performanceTitle");
+
+            // Afficher la performance
+            performanceResultElement.innerText = performancePerHour.toFixed(2);
+
+            // Calculer la différence par rapport à l'objectif
+            var difference = performancePerHour - objectif;
+            var percentageDifference = (difference / objectif) * 100;
+
+            if (performancePerHour < objectif) {
+                performanceResultElement.className = "below-objective";
+                performanceDifferenceElement.innerText = `Inférieur à l'objectif de ${difference.toFixed(2)} (${percentageDifference.toFixed(2)}%)`;
+            } else {
+                performanceResultElement.className = "above-objective";
+                performanceDifferenceElement.innerText = `Supérieur à l'objectif de ${difference.toFixed(2)} (${percentageDifference.toFixed(2)}%)`;
+            }
+
+            // Ajouter les données au tableau
+            var dataTableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            var newRow = dataTableBody.insertRow();
+
+            newRow.insertCell(0).innerText = groupName;
+            newRow.insertCell(1).innerText = numPeople;
+            newRow.insertCell(2).innerText = quantityCollected;
+            newRow.insertCell(3).innerText = performancePerHour.toFixed(2);
+
+            // Sauvegarder les données dans le LocalStorage
+            saveData();
+
+            // Afficher le graphique
+            displayChart();
+
+            // Réordonner les lignes en fonction de la performance
+            sortTable();
+        }
+
+        function sortTable() {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("dataTable");
+            switching = true;
+            dir = "desc"; // Tri par performance décroissant
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[3];
+                    y = rows[i + 1].getElementsByTagName("TD")[3];
+
+                    if (dir == "desc") {
+                        if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "asc") {
+                        if (parseFloat(x.innerHTML) > parseFloat(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "desc") {
+                        dir = "asc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+        function displayChart() {
+            var dataTableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            var labels = [];
+            var data = [];
+
+            for (var i = 0; i < dataTableBody.rows.length; i++) {
+                var row = dataTableBody.rows[i];
+                labels.push(row.cells[0].innerText);
+                data.push(parseFloat(row.cells[3].innerText));
+            }
+
+            var ctx = document.getElementById('performanceChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Performance par heure',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            document.getElementById('chartContainer').style.display = 'block';
+        }
+
+        function saveData() {
+            var tableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            var data = [];
+
+            for (var i = 0; i < tableBody.rows.length; i++) {
+                var row = tableBody.rows[i];
+                data.push({
+                    groupName: row.cells[0].innerText,
+                    numPeople: row.cells[1].innerText,
+                    quantityCollected: row.cells[2].innerText,
+                    performance: row.cells[3].innerText
+                });
+            }
+
+            localStorage.setItem('performanceData', JSON.stringify(data));
+        }
+
+        function loadSavedData() {
+            var savedData = localStorage.getItem('performanceData');
+            if (savedData) {
+                var data = JSON.parse(savedData);
+                var dataTableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+
+                data.forEach(function(item) {
+                    var newRow = dataTableBody.insertRow();
+                    newRow.insertCell(0).innerText = item.groupName;
+                    newRow.insertCell(1).innerText = item.numPeople;
+                    newRow.insertCell(2).innerText = item.quantityCollected;
+                    newRow.insertCell(3).innerText = item.performance;
+                });
+
+                displayChart(); // Afficher le graphique si des données sont présentes
+            }
+        }
+
+        function showReport() {
+            var tableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            var reportText = document.getElementById('reportText');
+            var reportContent = 'Rapport de Rendement\n\n';
+
+            for (var i = 0; i < tableBody.rows.length; i++) {
+                var row = tableBody.rows[i];
+                var groupName = row.cells[0].innerText;
+                var performance = parseFloat(row.cells[3].innerText);
+                var objectif = parseFloat(document.getElementById("objectif").value);
+                var difference = performance - objectif;
+                var percentageDifference = (difference / objectif) * 100;
+
+                reportContent += `EQUIPE: ${groupName}\n`;
+                reportContent += `RENDEMENT: ${performance.toFixed(2)} KG/H\n`;
+                reportContent += `Objectif: ${objectif.toFixed(2)} KG/H\n`;
+                reportContent += `Différence: ${difference.toFixed(2)}KG/H (${percentageDifference.toFixed(2)}%)\n\n`;
+            }
+
+            reportText.value = reportContent;
+            document.getElementById('reportModal').style.display = 'flex';
+        }
+
+        function closeReport() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function copyReport() {
+            var reportText = document.getElementById('reportText');
+            reportText.select();
+            document.execCommand('copy');
+            alert('Le rapport a été copié dans le presse-papiers.');
+        }
+
+        function clearData() {
+            // Effacer les données du tableau
+            var tableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+
+            // Effacer les données du LocalStorage
+            localStorage.removeItem('performanceData');
+
+            // Masquer le graphique s'il est affiché
+            var chartContainer = document.getElementById('chartContainer');
+            chartContainer.style.display = 'none';
+
+            // Effacer le texte du rapport
+            var reportText = document.getElementById('reportText');
+            reportText.value = '';
+
+            // Réinitialiser le texte dans la section des résultats
+            var performanceResultElement = document.getElementById("performanceResult");
+            var performanceDifferenceElement = document.getElementById("performanceDifference");
+            performanceResultElement.innerText = '--';
+            performanceDifferenceElement.innerText = '--';
+            performanceResultElement.className = '';
+        }
+    </script>
+</body>
+</html>
