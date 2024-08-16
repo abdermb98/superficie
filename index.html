@@ -510,12 +510,13 @@
                 var percentageDifference = (difference / objectif) * 100;
                 var total = parseFloat(row.cells[2].innerText);
 
-                reportContent += `EQUIPE: ${groupName}\n`;
-                reportContent += `CULLTURE : CEBOLLINO \n`;
-                reportContent += `SUPERFICIE: ${total} M²\n`;
-                reportContent += `RENDEMENT: ${performance.toFixed(2)} M²/H\n`;
-                reportContent += `Objectif: ${objectif.toFixed(2)} M²/H\n`;
-                reportContent += `Différence: ${difference.toFixed(2)}M²/H (${percentageDifference.toFixed(2)}%)\n\n`;
+                reportContent += `EQUIPE: *${groupName}*\n`;
+                reportContent += `CULLTURE : *CEBOLLINO* \n`;
+                reportContent += `PARCELLE : *P44 *\n`;
+                reportContent += `SUPERFICIE: *${total}* M²\n`;
+                reportContent += `RENDEMENT: *${performance.toFixed(2) M²/H*\n`;
+                reportContent += `Objectif: *${objectif.toFixed(2)} M²/H*\n`;
+                reportContent += `Différence: *${difference.toFixed(2)}M²/H (${percentageDifference.toFixed(2)}%)*\n\n`;
             }
 
             reportText.value = reportContent;
