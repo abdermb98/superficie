@@ -237,7 +237,7 @@
             <button onclick="clearData()">Effacer</button>
             <button onclick="showReport()">Rapport</button>
             <button onclick="navigateToPage()">Distro</button>
-            <button onclick="navigateToPage1()">Rend KG</button>
+            <button onclick="navigateToPage1()">Rend sup</button>
         </div>
         <h1>Rendement d'Équipes</h1>
 
@@ -262,7 +262,7 @@
                 <label for="exitTime">H Sortie :</label>
                 <input type="time" id="exitTime" name="exitTime" required>
 
-                <label for="quantityCollected">Superficie :</label>
+                <label for="quantityCollected">QTE KG :</label>
                 <input type="number" id="quantityCollected" name="quantityCollected" required>
             </div>
 
@@ -283,7 +283,7 @@
                 <tr>
                     <th>EQUIPE</th>
                     <th>NOMBRE DE PRS</th>
-                    <th>TOTAL M²</th>
+                    <th>TOTAL KG</th>
                     <th>RENDEMENT (par heure)</th>
                 </tr>
             </thead>
@@ -313,7 +313,7 @@
       window.location.href = 'https://abdermb98.github.io/DISTREO/'; // استبدل هذا بالرابط الخاص بك
     }
     function navigateToPage1() {
-      window.location.href = 'https://abdermb98.github.io/CALCUL/'; // استبدل هذا بالرابط الخاص بك
+      window.location.href = 'https://abdermb98.github.io/superficie/'; // استبدل هذا بالرابط الخاص بك
     }
         // Définir l'heure actuelle comme valeur par défaut pour le champ Heure de sortie
         window.onload = function() {
@@ -508,13 +508,12 @@
                 var objectif = parseFloat(document.getElementById("objectif").value);
                 var difference = performance - objectif;
                 var percentageDifference = (difference / objectif) * 100;
-                var total = parseFloat(row.cells[2].innerText);
+                var TOTAL = parseFloat(row.cells[2].innerText);
 
-                reportContent += `EQUIPE: *${groupName}*\n`;
-                reportContent += `CULLTURE : *CEBOLLINO* \n`;
-                reportContent += `PARCELLE : *P44 *\n`;
-                reportContent += `SUPERFICIE: *${total}* M²\n`;
-                reportContent += `RENDEMENT: *${performance.toFixed(2) M²/H*\n`;
+                reportContent += `EQUIPE: *${groupName}\*n`;
+                reportContent += CEBOLLINO\n `;
+                reportContent += `TOTAL CORTE: *${TOTAL}M²*\n `;
+                reportContent += `RENDEMENT: *${performance.toFixed(2)} M²/H*\n`;
                 reportContent += `Objectif: *${objectif.toFixed(2)} M²/H*\n`;
                 reportContent += `Différence: *${difference.toFixed(2)}M²/H (${percentageDifference.toFixed(2)}%)*\n\n`;
             }
