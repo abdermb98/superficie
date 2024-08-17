@@ -52,7 +52,8 @@
         .form-section input[type="number"],
         .form-section input[type="time"],
         .objectif-container input,
-        .group-name-container input {
+        .group-name-container input,
+        .group-name-container select {
             width: 100%;
             padding: 10px;
             margin-bottom: 4px;
@@ -61,6 +62,8 @@
             font-size: 16px;
             box-sizing: border-box;
         }
+
+        
 
         button {
             background-color: #007bff;
@@ -244,6 +247,42 @@
         <div class="group-name-container">
             <label for="groupName">Equipe :</label>
             <input type="text" id="groupName" name="groupName" required>
+            <label for="culture">culture :</label>
+            <select id="culture" name="PARCELLE" required>
+              <option value="">Sélectionner une option</option>
+              <option value="CEBOLLINO">CEBOLLINO</option>
+              <option value="ESTRAGON">ESTRAGON</option>
+              <option value="HABANERO">HABANERO</option>
+            </select>
+            <label for="culture">PARCELLES :</label>
+            <select id="PARCELLE" name="PARCELLE" required>
+              <option value="">Sélectionner une option</option>
+              <option value="P40">P40</option>
+              <option value="P41">P41</option>
+              <option value="P42">P42</option>
+              <option value="P43">P43</option>
+              <option value="P44">P44</option>
+              <option value="P45">P45</option>
+              <option value="P46">P46</option>
+              <option value="P47">P47</option>
+              <option value="P48">P48</option>
+              <option value="P49">P49</option>
+              <option value="P50">P50</option>
+              <option value="P51">P51</option>
+              <option value="P52">P52</option>
+              <option value="P53">P53</option>
+              <option value="P54">P54</option>
+              <option value="P55">P55</option>
+              <option value="P56">P56</option>
+              <option value="P57">P57</option>
+              <option value="P58">P58</option>
+              <option value="P59">P59</option>
+              <option value="P60">P60</option>
+              <option value="P61">P61</option>
+              <option value="P62">P62</option>
+              <option value="P63">P63</option>
+          </select>
+
         </div>
 
         <div class="objectif-container">
@@ -293,9 +332,7 @@
         </table>
 
         <!-- Conteneur pour le graphique -->
-        <div class="chart-container" id="chartContainer">
-            <canvas id="performanceChart"></canvas>
-        </div>
+        
     </div>
 
     <!-- Modal pour afficher le rapport -->
@@ -424,42 +461,7 @@
             }
         }
 
-        function displayChart() {
-            var dataTableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
-            var labels = [];
-            var data = [];
-
-            for (var i = 0; i < dataTableBody.rows.length; i++) {
-                var row = dataTableBody.rows[i];
-                labels.push(row.cells[0].innerText);
-                data.push(parseFloat(row.cells[3].innerText));
-            }
-
-            var ctx = document.getElementById('performanceChart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Performance par heure',
-                        data: data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            document.getElementById('chartContainer').style.display = 'block';
-        }
+        
 
         function saveData() {
             var tableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
@@ -499,7 +501,7 @@
         function showReport() {
             var tableBody = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
             var reportText = document.getElementById('reportText');
-            var reportContent = 'Rapport de Rendement\n\n';
+            var reportContent = 'Rapport de Rendement FINCA20\n\n';
 
             for (var i = 0; i < tableBody.rows.length; i++) {
                 var row = tableBody.rows[i];
@@ -509,15 +511,16 @@
                 var difference = performance - objectif;
                 var percentageDifference = (difference / objectif) * 100;
                 var TOTAL = parseFloat(row.cells[2].innerText);
+                var CULTURE = document.getElementById('culture').value;
+                var PARCELLE =document.getElementById('PARCELLE').value;
 
-                reportContent += `EQUIPE: *${groupName}\*n`;
-                reportContent += CEBOLLINO\n `;
-                reportContent += `TOTAL CORTE: *${TOTAL}M²*\n `;
-                reportContent += `RENDEMENT: *${performance.toFixed(2)} M²/H*\n`;
-                reportContent += `Objectif: *${objectif.toFixed(2)} M²/H*\n`;
-                reportContent += `Différence: *${difference.toFixed(2)}M²/H (${percentageDifference.toFixed(2)}%)*\n\n`;
+                reportContent += `EQUIPE    : *${groupName}*\n`;
+                reportContent += `PARCELLE  : *${CULTURE} ${PARCELLE}*\n`;
+                reportContent += `EQUIPE    : *${TOTAL} M²*\n`;
+                reportContent += `RENDEMENT : *${performance.toFixed(2)} M²/H*\n`;
+                reportContent += `Objectif  : *${objectif.toFixed(2)} M²/H*\n`;
+                reportContent += `Différence: *${difference.toFixed(2)}M²/H* (${percentageDifference.toFixed(2)}%)\n\n`;
             }
-
             reportText.value = reportContent;
             document.getElementById('reportModal').style.display = 'flex';
         }
